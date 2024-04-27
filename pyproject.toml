@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "maze-6"
+version = "0.1.0"
+description = "To create a simple Python map game with a Flask API that includes a 2D map grid, cells with different values indicating unknown areas, floors, walls, doors, starting points, and endpoints, along with configurable items and NPCs in cells, the recommended tech stack involves Python for programming, Flask as the API framework, and Matplotlib for displaying the map as a PNG file. The game's architecture involves a grid implemented as a list of lists, where each cell's value represents its type (unknown, floor, wall, door, start point, end point). Items within the game would have a base model meta description allowing for customization at instantiation, and although NPCs can exist in any cell, interacting with them would raise a 'NotImplemented' exception. For creating medium and small rooms with corridors of 1 or 2 cells in width, careful design and planning of the grid are required, resembling the layout found in games like Pokémon but accessible through an API. This setup encourages exploring different areas of the map, configuring items, and eventually saving or displaying the map using Matplotlib, which adds a visual component to the game's API."
+authors = ["AutoGPT <info@agpt.co>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.11"
+bcrypt = "^3.2.0"
+fastapi = "*"
+matplotlib = "^3.4.2"
+prisma = "*"
+pydantic = "*"
+uvicorn = "*"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

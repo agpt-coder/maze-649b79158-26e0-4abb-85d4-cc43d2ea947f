@@ -1,0 +1,80 @@
+// datasource db defines the database connection settings.
+// It is configured for PostgreSQL and uses an environment variable for the connection URL.
+// The 'extensions' feature enables the use of PostgreSQL-specific data types.
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+}
+
+// generator db configures Prisma Client settings.
+// It is set up to use Prisma Client Python with asyncio interface and specific features.
+generator db {
+  provider             = "prisma-client-py"
+  interface            = "asyncio"
+  recursive_type_depth = 5
+  previewFeatures      = ["postgresqlExtensions"]
+}
+
+model User {
+  id        String   @id @default(dbgenerated("gen_random_uuid()"))
+  email     String   @unique
+  password  String
+  role      Role     @default(PLAYER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  GameStates GameState[]
+  // Relations for items and NPCs removed as those are part of the map
+}
+
+model GameState {
+  id        String   @id @default(dbgenerated("gen_random_uuid()"))
+  userId    String
+  data      Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  User User         @relation(fields: [userId], references: [id])
+  Maps ProjectMap[]
+}
+
+model ProjectMap {
+  id          String   @id @default(dbgenerated("gen_random_uuid()"))
+  gameStateId String
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  cells       Json // This will store the cells information including types, items, and NPCs
+
+  GameState GameState @relation(fields: [gameStateId], references: [id])
+  Items     Item[]
+  NPCs      NPC[]
+}
+
+model Item {
+  id           String  @id @default(dbgenerated("gen_random_uuid()"))
+  projectMapId String
+  name         String
+  description  String?
+  metaData     Json // Base model meta description
+
+  ProjectMap ProjectMap @relation(fields: [projectMapId], references: [id])
+}
+
+model NPC {
+  id           String  @id @default(dbgenerated("gen_random_uuid()"))
+  projectMapId String
+  name         String
+  description  String?
+  attributes   Json
+
+  ProjectMap ProjectMap @relation(fields: [projectMapId], references: [id])
+}
+
+enum Role {
+  PLAYER
+  SUBSCRIBER
+  ADMIN
+}
+
